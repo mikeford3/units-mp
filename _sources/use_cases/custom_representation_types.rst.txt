@@ -9,19 +9,19 @@ its own custom logic for it (i.e. use a complex number or a measurement class th
 not only a value but also a measurement error).
 
 
-A `Scalar` concept
-------------------
+A `Representation` concept
+--------------------------
 
 To support a minimum set of `quantity` operations all custom representation types have to
-satisfy at least the `Scalar` concept. Which means that they:
+satisfy at least the `Representation` concept. Which means that they:
 
 - cannot be quantities by themselves,
 - cannot be wrappers over the `quantity` type (i.e. ``std::optional<si::length<si::metre>>``),
 - have to be regular types (e.g. they have to provide equality operators)
-- if they are constructible from a fundamental integral type, they have to provide multiplication
-  and division operators for their types,
-- otherwise, their values need to support the multiplication or division by the values of the
-  ``std::int64_t`` type which is the type used to store elements of a `ratio`.
+- should either have common type with ``std::intmax_t`` which provides multiplication and
+  division operators
+- or :expr:`T::value_type` must be valid, and common type of ``T::value_type`` and ``std::intmax_t``
+  must at least provide multiplication and division operators with itself and ``T``.
 
 With the above we will be able to construct quantities, convert between the units of the same
 dimension, and compare them for equality.
@@ -30,14 +30,16 @@ dimension, and compare them for equality.
 The Simplest Custom Representation Type
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The simplest representation type that fullfills the above requirements can look as follows::
+The simplest representation type that fulfills the above requirements can look as follows::
 
     class my_rep {
-      int value_{};
+      std::intmax_t value_;
     public:
       my_rep() = default;
-      constexpr my_rep(int v) : value_(v) {}
-      [[nodiscard]] friend constexpr bool operator==(my_rep lhs, my_rep rhs) = default;
+      constexpr explicit my_rep(std::intmax_t v) noexcept : value_(v) {}
+
+      [[nodiscard]] bool operator==(my_rep) const = default;
+
       [[nodiscard]] friend constexpr my_rep operator*(my_rep lhs, my_rep rhs)
       {
         return my_rep(lhs.value_ * rhs.value_);
@@ -51,7 +53,7 @@ The simplest representation type that fullfills the above requirements can look 
 Now we can put ``my_rep`` as the last parameter of the `quantity` class template and the following
 code will work just fine::
 
-    static_assert(si::length<si::metre, my_rep>(2'000) == si::length<si::kilometre, my_rep>(2));
+    static_assert(si::length<si::metre, my_rep>(my_rep(2'000)) == si::length<si::kilometre, my_rep>(my_rep(2)));
 
 
 Construction of Quantities with Custom Representation Types
@@ -90,7 +92,7 @@ representation types we have to obey similar rules::
 This also applies when we want to create a quantity with a custom representation type
 from a regular quantity value::
 
-    Length auto d = 123q_m;
+    Length auto d = 123_q_m;
     si::length<si::metre, impl> d1(d);                      // OK
     si::length<si::metre, expl> d2(d);                      // Compile-time error
     si::length<si::metre, expl> d3(quantity_cast<expl>(d)); // OK
@@ -101,8 +103,8 @@ The only difference here is that in this case we have to explicitly cast the `qu
 Additional Requirements
 -----------------------
 
-As noted in the previous chapter, the `Scalar` concept guarantees us the possibility to
-construct quantities, convert between the units of the same dimension, and compare them
+As noted in the previous chapter, the `Representation` concept guarantees us the possibility
+to construct quantities, convert between the units of the same dimension, and compare them
 for equality. To provide additional `quantity` operations the custom representation type
 have to satisfy more requirements.
 
@@ -122,7 +124,7 @@ With C++20 it is really easy to do::
 
     class my_rep {
     public:
-      [[nodiscard]] friend constexpr auto operator<=>(my_rep lhs, my_rep rhs) = default;
+      [[nodiscard]] constexpr auto operator<=>(my_rep other) const = default;
 
       // ...
     };
@@ -158,7 +160,7 @@ Thanks to it the following code will run as expected::
                   si::length<si::kilometre, my_rep>(3));
 
 Of course, the above operators are the smallest possible set to provide support for basic
-arithmetic operations. In case the user wants to use faster or more sofisticated operators
+arithmetic operations. In case the user wants to use faster or more sophisticated operators
 the following ones can be provided::
 
     class my_rep {
@@ -200,7 +202,7 @@ The `quantity` class template has a few static member functions: `quantity::zero
 representation type. The default implementation is provided through the `quantity_values` class
 template::
 
-    template<Scalar Rep>
+    template<Representation Rep>
     struct quantity_values {
       static constexpr Rep zero() noexcept { return Rep(0); }
       static constexpr Rep one() noexcept { return Rep(1); }
@@ -215,12 +217,13 @@ operations.
 `treat_as_floating_point`
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In the :ref:`Conversions and Casting` chapter we learned that the conversions provided by the
-library's framework treat floating-point representation types differently than the integral
-ones. This behavior can also be extended to the custom representation types with
-`treat_as_floating_point` customization point which default definition is::
+In the :ref:`framework/conversions_and_casting:Conversions and Casting` chapter we learned
+that the conversions provided by the library's framework treat floating-point representation
+types differently than the integral ones. This behavior can also be extended to the custom
+representation types with `treat_as_floating_point` customization point which default
+definition is::
 
-    template<Scalar Rep>
+    template<Representation Rep>
     inline constexpr bool treat_as_floating_point = std::is_floating_point_v<Rep>;
 
 If our representation type should have a floating-point semantics or if it is a class
@@ -301,4 +304,5 @@ representation types with::
 .. seealso::
 
     For more examples of custom representation types usage please refer to the
-    :ref:`Linear Algebra vs. Quantities` chapter and the :ref:`measurement` example.
+    :ref:`use_cases/linear_algebra:Linear Algebra vs. Quantities` chapter and the
+    :ref:`examples/measurement:measurement` example.

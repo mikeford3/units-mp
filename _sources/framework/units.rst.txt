@@ -24,7 +24,7 @@ Base Units
 ``m`` (meter) is a base unit of length, ``s`` (second) is a base unit of
 time. In each :term:`coherent system of units`, there is only one base
 unit for each base quantity. This is why a base unit type is required by
-the `base_dimension` definition in this library. For example `si::dim_length`
+the `base_dimension` definition in this library. For example ``si::dim_length``
 can be defined in the following way::
 
     namespace si {
@@ -33,7 +33,7 @@ can be defined in the following way::
 
     }
 
-where `si::metre` is defined as::
+where ``si::metre`` is defined as::
 
     namespace si {
 
@@ -43,8 +43,8 @@ where `si::metre` is defined as::
 
 In the above definition ``"m"`` is the unit symbol to be used in the text
 output, and ``si::prefix`` specifies that the library should allow
-definitions of prefixed units using `si::metre` as a reference (i.e.
-`si::centimetre`).
+definitions of prefixed units using ``si::metre`` as a reference (i.e.
+``si::centimetre``).
 
 .. seealso::
 
@@ -57,32 +57,41 @@ definitions of prefixed units using `si::metre` as a reference (i.e.
     child class inherited from the instantiation of this `named_unit`
     class template. This is called a
     :abbr:`CRTP (Curiously Recurring Template Parameter)` Idiom and is used
-    in many places in this library to provide :ref:`The Downcasting Facility`.
+    in many places in this library to provide
+    :ref:`design/downcasting:The Downcasting Facility`.
     Hopefully if [P0847]_ will land in C++23 the additional CRTP-related
     template parameter will be removed from this definition.
 
 
 It is important to notice here that :term:`SI` is not the only system used
 in the industry and the library has to support other systems too. Also
-in some cases conversions between such systems should be allowed. The
-fact that the `base_dimension` takes the base unit in its definition makes
-it really easy to define other systems of units. For example length in the
+in some cases conversions between such systems should be allowed. Thanks to
+the fact that the `base_dimension` takes the base unit type in its definition
+allows us to easily define various systems of units for the same physical
+dimension. For example length in the
 `CGS <https://en.wikipedia.org/wiki/Centimetre%E2%80%93gram%E2%80%93second_system_of_units>`_
 could be defined as::
 
-    namespace cgs {
+    namespace si::cgs {
 
     struct dim_length : base_dimension<"L", si::centimetre> {};
 
     }
 
 The fact that both base dimensions use the same identifier ``"L"`` tells
-the library that bot definitions refer to the same physical dimension of
+the library that both definitions refer to the same physical dimension of
 length. The only difference is the measurement unit used to define their
-base dimensions. Thanks to using `si::centimetre` in the `cgs::dim_length`
-definition we also enabled the ability to easily convert between those
-2 base dimensions (as the library knows how to convert `si::metre` to
-`si::centimetre` and vice versa).
+base dimensions. Thanks to using the unit that is defined in terms of the
+the same reference unit as the one provided to ``si::dim_length`` definition
+(namely ``si::centimetre`` which is ``1/100`` of ``si::metre``) we also enabled
+the ability to easily convert between those 2 base dimensions (as the library
+knows how to convert ``si::metre`` to ``si::centimetre`` and vice versa).
+
+.. seealso::
+
+    More details on custom systems definitions and conversions between
+    units of the same physical dimension can be found in the
+    :ref:`use_cases/extensions:Custom Systems` chapter.
 
 
 Derived Units
@@ -120,31 +129,31 @@ will result in a different unnamed unit symbol:
     :emphasize-lines: 2-4, 6-8, 10-12
 
     struct dim_momentum : derived_dimension<dim_momentum, kilogram_metre_per_second,
-                                            exp<si::dim_mass, 1>,
-                                            exp<si::dim_length, 1>,
-                                            exp<si::dim_time, -1>> {};    // kg ⋅ m/s
+                                            exponent<si::dim_mass, 1>,
+                                            exponent<si::dim_length, 1>,
+                                            exponent<si::dim_time, -1>> {};    // kg ⋅ m/s
     struct dim_momentum : derived_dimension<dim_momentum, kilogram_metre_per_second,
-                                            exp<si::dim_length, 1>,
-                                            exp<si::dim_mass, 1>,
-                                            exp<si::dim_time, -1>> {};    // m ⋅ kg/s
+                                            exponent<si::dim_length, 1>,
+                                            exponent<si::dim_mass, 1>,
+                                            exponent<si::dim_time, -1>> {};    // m ⋅ kg/s
     struct dim_momentum : derived_dimension<dim_momentum, kilogram_metre_per_second,
-                                            exp<si::dim_time, -1>,
-                                            exp<si::dim_length, 1>,
-                                            exp<si::dim_mass, 1>> {};     // 1/s ⋅ m ⋅ kg
+                                            exponent<si::dim_time, -1>,
+                                            exponent<si::dim_length, 1>,
+                                            exponent<si::dim_mass, 1>> {};     // 1/s ⋅ m ⋅ kg
 
 where ``kilogram_metre_per_second`` is defined as::
 
     struct kilogram_metre_per_second : unit<kilogram_metre_per_second> {};
 
 However, the easiest way to define momentum is just to use the
-`si::velocity` derived dimension in the recipe:
+``si::speed`` derived dimension in the recipe:
 
 .. code-block::
     :emphasize-lines: 3
 
     struct dim_momentum : derived_dimension<dim_momentum, kilogram_metre_per_second,
-                                            exp<si::dim_mass, 1>,
-                                            exp<si::dim_velocity, 1>> {}; // kg ⋅ m/s
+                                            exponent<si::dim_mass, 1>,
+                                            exponent<si::dim_speed, 1>> {}; // kg ⋅ m/s
 
 In such a case the library will do its magic and will automatically
 unpack a provided derived dimension to its base dimensions in order to
@@ -161,8 +170,8 @@ of ``N/m``):
     :emphasize-lines: 2
 
     struct dim_surface_tension : derived_dimension<dim_surface_tension, newton_per_metre,
-                                                    exp<si::dim_force, 1>,
-                                                    exp<si::dim_length, -1>> {}; // N/m
+                                                   exponent<si::dim_force, 1>,
+                                                   exponent<si::dim_length, -1>> {}; // N/m
 
 If we defined the above in terms of base units we would end up with
 a ``kg/s²`` derived unit symbol.
@@ -186,28 +195,31 @@ Those units are the scaled versions of a time dimension's base unit,
 namely second. Those can be defined easily in the library using
 `named_scaled_unit` class template::
 
-    struct minute : named_scaled_unit<minute, "min", no_prefix, ratio<60>, second> {};
-    struct hour : named_scaled_unit<hour, "h", no_prefix, ratio<60>, minute> {};
-    struct day : named_scaled_unit<hour, "d", no_prefix, ratio<24>, hour> {};
+    struct minute : named_scaled_unit<minute, "min", no_prefix, ratio(60), second> {};
+    struct hour : named_scaled_unit<hour, "h", no_prefix, ratio(60), minute> {};
+    struct day : named_scaled_unit<hour, "d", no_prefix, ratio(24), hour> {};
 
 where `no_prefix` is a special tag type describing that the library should
 not allow to define a new prefixed unit that would use this unit as a
 reference ("kilohours" does not have much sense, right?). The `ratio` type
 used in the definition is really similar to ``std::ratio`` but it takes
-the third additional argument that defines the exponent of the ratio.
+an additional ``Exponent`` template parameter that defines the exponent of the ratio.
+Another important difference is the fact that the objects of that class are used
+as class NTTPs rather then a type template parameter kind.
+
 Thanks to it we can address nearly infinite scaling factors between units
 and define units like::
 
     struct electronvolt : named_scaled_unit<electronvolt, "eV", prefix,
-                                            ratio<1'602'176'634, 1'000'000'000, -19>, joule> {};
+                                            ratio(1'602'176'634, 1'000'000'000, -19), joule> {};
 
 .. 
     TODO Submit a bug for above lexing problem
 
 Finally, the last of the `named_scaled_unit` class template parameters
 provide a reference unit for scaling. Please note that it can be a dimension's
-base/coherent unit (like `si::second`) or any other unit (i.e. `si::minute`,
-`si::hour`) that is a scaled version of the dimension's base/coherent unit.
+base/coherent unit (like ``si::second``) or any other unit (i.e. ``si::minute``,
+``si::hour``) that is a scaled version of the dimension's base/coherent unit.
 
 
 Prefixed Unit
@@ -221,26 +233,26 @@ complete list of all the :term:`SI` prefixes supported by the library::
 
     struct prefix : prefix_family {};
 
-    struct yocto  : units::prefix<yocto,  prefix, "y",  ratio<1, 1, -24>> {};
-    struct zepto  : units::prefix<zepto,  prefix, "z",  ratio<1, 1, -21>> {};
-    struct atto   : units::prefix<atto,   prefix, "a",  ratio<1, 1, -18>> {};
-    struct femto  : units::prefix<femto,  prefix, "f",  ratio<1, 1, -15>> {};
-    struct pico   : units::prefix<pico,   prefix, "p",  ratio<1, 1, -12>> {};
-    struct nano   : units::prefix<nano,   prefix, "n",  ratio<1, 1,  -9>> {};
-    struct micro  : units::prefix<micro,  prefix, "µ",  ratio<1, 1,  -6>> {};
-    struct milli  : units::prefix<milli,  prefix, "m",  ratio<1, 1,  -3>> {};
-    struct centi  : units::prefix<centi,  prefix, "c",  ratio<1, 1,  -2>> {};
-    struct deci   : units::prefix<deci,   prefix, "d",  ratio<1, 1,  -1>> {};
-    struct deca   : units::prefix<deca,   prefix, "da", ratio<1, 1,   1>> {};
-    struct hecto  : units::prefix<hecto,  prefix, "h",  ratio<1, 1,   2>> {};
-    struct kilo   : units::prefix<kilo,   prefix, "k",  ratio<1, 1,   3>> {};
-    struct mega   : units::prefix<mega,   prefix, "M",  ratio<1, 1,   6>> {};
-    struct giga   : units::prefix<giga,   prefix, "G",  ratio<1, 1,   9>> {};
-    struct tera   : units::prefix<tera,   prefix, "T",  ratio<1, 1,  12>> {};
-    struct peta   : units::prefix<peta,   prefix, "P",  ratio<1, 1,  15>> {};
-    struct exa    : units::prefix<exa,    prefix, "E",  ratio<1, 1,  18>> {};
-    struct zetta  : units::prefix<zetta,  prefix, "Z",  ratio<1, 1,  21>> {};
-    struct yotta  : units::prefix<yotta,  prefix, "Y",  ratio<1, 1,  24>> {};
+    struct yocto  : units::prefix<yocto,  prefix, "y",  ratio(1, 1, -24)> {};
+    struct zepto  : units::prefix<zepto,  prefix, "z",  ratio(1, 1, -21)> {};
+    struct atto   : units::prefix<atto,   prefix, "a",  ratio(1, 1, -18)> {};
+    struct femto  : units::prefix<femto,  prefix, "f",  ratio(1, 1, -15)> {};
+    struct pico   : units::prefix<pico,   prefix, "p",  ratio(1, 1, -12)> {};
+    struct nano   : units::prefix<nano,   prefix, "n",  ratio(1, 1,  -9)> {};
+    struct micro  : units::prefix<micro,  prefix, "µ",  ratio(1, 1,  -6)> {};
+    struct milli  : units::prefix<milli,  prefix, "m",  ratio(1, 1,  -3)> {};
+    struct centi  : units::prefix<centi,  prefix, "c",  ratio(1, 1,  -2)> {};
+    struct deci   : units::prefix<deci,   prefix, "d",  ratio(1, 1,  -1)> {};
+    struct deca   : units::prefix<deca,   prefix, "da", ratio(1, 1,   1)> {};
+    struct hecto  : units::prefix<hecto,  prefix, "h",  ratio(1, 1,   2)> {};
+    struct kilo   : units::prefix<kilo,   prefix, "k",  ratio(1, 1,   3)> {};
+    struct mega   : units::prefix<mega,   prefix, "M",  ratio(1, 1,   6)> {};
+    struct giga   : units::prefix<giga,   prefix, "G",  ratio(1, 1,   9)> {};
+    struct tera   : units::prefix<tera,   prefix, "T",  ratio(1, 1,  12)> {};
+    struct peta   : units::prefix<peta,   prefix, "P",  ratio(1, 1,  15)> {};
+    struct exa    : units::prefix<exa,    prefix, "E",  ratio(1, 1,  18)> {};
+    struct zetta  : units::prefix<zetta,  prefix, "Z",  ratio(1, 1,  21)> {};
+    struct yotta  : units::prefix<yotta,  prefix, "Y",  ratio(1, 1,  24)> {};
 
     }
 
@@ -251,17 +263,17 @@ domain::
 
     struct prefix : prefix_family {};
 
-    struct kibi : units::prefix<kibi, prefix, "Ki", ratio<                    1'024>> {};
-    struct mebi : units::prefix<mebi, prefix, "Mi", ratio<                1'048'576>> {};
-    struct gibi : units::prefix<gibi, prefix, "Gi", ratio<            1'073'741'824>> {};
-    struct tebi : units::prefix<tebi, prefix, "Ti", ratio<        1'099'511'627'776>> {};
-    struct pebi : units::prefix<pebi, prefix, "Pi", ratio<    1'125'899'906'842'624>> {};
-    struct exbi : units::prefix<exbi, prefix, "Ei", ratio<1'152'921'504'606'846'976>> {};
+    struct kibi : units::prefix<kibi, prefix, "Ki", ratio(                    1'024)> {};
+    struct mebi : units::prefix<mebi, prefix, "Mi", ratio(                1'048'576)> {};
+    struct gibi : units::prefix<gibi, prefix, "Gi", ratio(            1'073'741'824)> {};
+    struct tebi : units::prefix<tebi, prefix, "Ti", ratio(        1'099'511'627'776)> {};
+    struct pebi : units::prefix<pebi, prefix, "Pi", ratio(    1'125'899'906'842'624)> {};
+    struct exbi : units::prefix<exbi, prefix, "Ei", ratio(1'152'921'504'606'846'976)> {};
 
     }
 
 With the definitions like above we can easily define prefixed unit. For
-example we can define `si::kilometre` as::
+example we can define ``si::kilometre`` as::
 
     namespace si {
 
@@ -292,20 +304,59 @@ ratio in reference to "metre per second":
 Whichever, we choose there will always be someone not happy with our choice.
 
 Thanks to a `deduced_unit` class template provided by the library this problem
-does not exist at all. With it `si::kilometre_per_hour` can be defined as::
+does not exist at all. With it ``si::kilometre_per_hour`` can be defined as::
 
     namespace si {
 
-    struct kilometre_per_hour : deduced_unit<kilometre_per_hour, dim_velocity, kilometre, hour> {};
+    struct kilometre_per_hour : deduced_unit<kilometre_per_hour, dim_speed, kilometre, hour> {};
 
     }
 
-Please note that this is the only unit-related class template that takes
-a dimension as its parameter. This derived dimension provides a :term:`recipe`
+In case the deduced unit should served as a named one we can use ether a
+`named_deduced_unit` where the user is able to provide a symbol for the unit
+by him/her-self or `noble_deduced_unit` where the symbol is the deduced name
+based on the ingredients::
+
+    namespace si::fps {
+
+    struct nautical_mile_per_hour : named_deduced_unit<nautical_mile_per_hour, dim_speed,
+                                                       "knot", no_prefix, nautical_mile, hour>{};
+    struct foot_pound_force : noble_deduced_unit<foot_pound_force, dim_energy, pound_force, foot> {};
+
+    }
+
+Please note that deduced units are the only unit-related class template that
+take a dimension as its parameter. This derived dimension provides a :term:`recipe`
 used for its definition. Based on the information stored in the recipe
 (order, type, and exponents of composite dimensions) and the ratios of units
 provided in the template parameter list after the derived dimension parameter,
 the library calculates the final ratio for this unit.
+
+
+Aliased Units
+-------------
+
+In order to make our life easier people tend to assign alternative/aliased names
+to some popular units. As an example we often use "tonne" instead of "megagram",
+"litre" instead of "cubic decimetre", or "hectare" instead of "square hectometre".
+
+This library provides facilities to define aliased names to already defined units
+with `alias_unit` class template::
+
+    namespace si {
+
+    struct litre : alias_unit<cubic_decimetre, "l", prefix> {};
+
+    }
+
+Also, it is possible to add prefixes to such aliased units with `prefixed_alias_unit`
+class template::
+
+    namespace si {
+
+    struct millilitre : prefixed_alias_unit<cubic_centimetre, milli, litre> {};
+
+    }
 
 
 Class Hierarchy
@@ -327,28 +378,27 @@ of a `scaled_unit` class template:
     [scaled_unit<UnitRatio, Unit>]<:-[named_scaled_unit<Child, Symbol, PrefixFamily, Ratio, Unit>]
     [scaled_unit<UnitRatio, Unit>]<:-[prefixed_unit<Child, Prefix, Unit>]
     [scaled_unit<UnitRatio, Unit>]<:-[deduced_unit<Child, Dimension, Unit, Unit...>]
+    [scaled_unit<UnitRatio, Unit>]<:-[noble_deduced_unit<Child, Dimension, Unit, Unit...>]
+    [scaled_unit<UnitRatio, Unit>]<:-[named_deduced_unit<Child, Dimension, Symbol, PrefixFamily, Unit, Unit...>]
+    [scaled_unit<UnitRatio, Unit>]<:-[alias_unit<Unit, Symbol, PrefixFamily>]
+    [scaled_unit<UnitRatio, Unit>]<:-[prefixed_alias_unit<Unit, Prefix, AliasUnit>]
 
 `scaled_unit` is a class template used exclusively by the library's framework
 and user should not instantiate it by him/her-self. However the user can sometimes
 observe this type in case an unit/dimension conversion expression will end up with an
 unknown/undefined unit type like in the below example::
 
-    using namespace si::literals;
+    using namespace units::isq::si::literals;
 
-    Length auto l = 100q_km_per_h * 10q_s;
+    Length auto l = 100_q_km_per_h * 10_q_s;
 
 The type of ``l`` above will be
-:expr:`si::length<scaled_unit<ratio<1, 36, 1>, si::metre>, long double>`. This is caused
+``si::length<scaled_unit<ratio(1, 36, 1), si::metre>, long double>``. This is caused
 by the fact that the library does not define a unit of a length quantity that has the
-ratio ``10/36`` of a `si::metre`. If such a unit was predefined we would see its concrete
+ratio ``10/36`` of a ``si::metre``. If such a unit was predefined we would see its concrete
 type here instead.
 
 .. seealso::
 
-    To learn more about unknown units please refer to
-    :ref:`Working with Unknown Units and Dimensions` chapter.
-
-
-.. rubric:: Citations:
-
-.. [P0847] `"Deducing this" <https://wg21.link/P0847>`_, Programming Language C++ proposal
+    To learn more about unknown units please refer to the
+    :ref:`use_cases/unknown_dimensions:Working with Unknown Dimensions and Their Units` chapter.

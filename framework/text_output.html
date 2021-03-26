@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Text Output &mdash; mp-units 0.5.0 documentation</title>
+  <title>Text Output &mdash; mp-units 0.7.0 documentation</title>
   
 
   
@@ -31,8 +31,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -64,7 +62,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.7.0
               </div>
             
           
@@ -97,6 +95,8 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../framework.html">Framework Basics</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="basic_concepts.html">Basic Concepts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quantities.html">Quantities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantity_points.html">Quantity Points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantity_kinds.html">Quantity Kinds</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dimensions.html">Dimensions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="units.html">Units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="constants.html">Quantity Constants</a></li>
@@ -127,17 +127,16 @@
 </ul>
 <p class="caption"><span class="caption-text">Reference:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../reference/concepts.html">Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/types.html">Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/functions.html">Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/functions.html#metafunctions">Metafunctions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/core.html">Core Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/systems.html">Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/random.html">Random</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Appendix:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
 </ul>
 
             
@@ -209,14 +208,23 @@
 <h1>Text Output<a class="headerlink" href="#text-output" title="Permalink to this headline">¶</a></h1>
 <p>Beside providing dimensional analysis and units conversions, the library
 also tries really hard to print any quantity in the most user friendly way.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The library provides no text output for
+quantity points or quantity (point) kinds.</p>
+</div>
 <div class="section" id="output-streams">
 <h2>Output Streams<a class="headerlink" href="#output-streams" title="Permalink to this headline">¶</a></h2>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The streaming support is provided via the <code class="docutils literal notranslate"><span class="pre">&lt;units/quantity_io.h&gt;</span></code> header file.</p>
+</div>
 <p>The easiest way to print a quantity is to provide its object to the output
 stream:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="k">namespace</span> <span class="n">si</span><span class="o">::</span><span class="n">literals</span><span class="p">;</span>
-<span class="k">using</span> <span class="k">namespace</span> <span class="n">international</span><span class="o">::</span><span class="n">literals</span><span class="p">;</span>
-<span class="k">constexpr</span> <span class="n">Velocity</span> <span class="k">auto</span> <span class="n">v1</span> <span class="o">=</span> <span class="n">avg_speed</span><span class="p">(</span><span class="mf">220.</span><span class="n">q_km</span><span class="p">,</span> <span class="mi">2</span><span class="n">q_h</span><span class="p">);</span>
-<span class="k">constexpr</span> <span class="n">Velocity</span> <span class="k">auto</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">avg_speed</span><span class="p">(</span><span class="mf">140.</span><span class="n">q_mi</span><span class="p">,</span> <span class="mi">2</span><span class="n">q_h</span><span class="p">);</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="k">namespace</span> <span class="n">units</span><span class="o">::</span><span class="n">isq</span><span class="o">::</span><span class="n">si</span><span class="o">::</span><span class="n">literals</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">units</span><span class="o">::</span><span class="n">isq</span><span class="o">::</span><span class="n">si</span><span class="o">::</span><span class="n">international</span><span class="o">::</span><span class="n">literals</span><span class="p">;</span>
+<span class="k">constexpr</span> <span class="n">Speed</span> <span class="k">auto</span> <span class="n">v1</span> <span class="o">=</span> <span class="n">avg_speed</span><span class="p">(</span><span class="mf">220.</span><span class="n">_q_km</span><span class="p">,</span> <span class="mi">2</span><span class="n">_q_h</span><span class="p">);</span>
+<span class="k">constexpr</span> <span class="n">Speed</span> <span class="k">auto</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">avg_speed</span><span class="p">(</span><span class="mf">140.</span><span class="n">_q_mi</span><span class="p">,</span> <span class="mi">2</span><span class="n">_q_h</span><span class="p">);</span>
 <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">v1</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\n&#39;</span><span class="p">;</span>  <span class="c1">// 110 km/h</span>
 <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">v2</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\n&#39;</span><span class="p">;</span>  <span class="c1">// 70 mi/h</span>
 </pre></div>
@@ -225,7 +233,7 @@ stream:</p>
 by a space and then the symbol of a <a class="reference internal" href="../glossary.html#term-unit"><span class="xref std std-term">unit</span></a> associated with this quantity.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>Remember that it is a good practice to always <a class="reference internal" href="../reference/functions.html#_CPPv4I_8Quantity000EN5units13quantity_castEDaRK8quantityI1D1U3RepE" title="units::quantity_cast"><code class="xref cpp cpp-any docutils literal notranslate"><span class="pre">quantity_cast()</span></code></a> a quantity
+<p>Remember that it is a good practice to always <code class="xref cpp cpp-any docutils literal notranslate"><span class="pre">quantity_cast</span></code> a quantity
 of an unknown <code class="docutils literal notranslate"><span class="pre">auto</span></code> type before passing it to the text output:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">quantity_cast</span><span class="o">&lt;</span><span class="n">si</span><span class="o">::</span><span class="n">kilometre_per_hour</span><span class="o">&gt;</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\n&#39;</span><span class="p">;</span>  <span class="c1">// 110 km/h</span>
 <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">quantity_cast</span><span class="o">&lt;</span><span class="n">si</span><span class="o">::</span><span class="n">metre_per_second</span><span class="o">&gt;</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\n&#39;</span><span class="p">;</span>    <span class="c1">// 30.5556 m/s</span>
@@ -236,15 +244,19 @@ of an unknown <code class="docutils literal notranslate"><span class="pre">auto<
 <h3>Stream Output Formatting<a class="headerlink" href="#stream-output-formatting" title="Permalink to this headline">¶</a></h3>
 <p>Only a basic formatting can be applied for output streams. It includes control
 over width, fill, and alignment:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;|&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">123</span><span class="n">q_m</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;|&quot;</span><span class="p">;</span>                       <span class="c1">// |     123 m|</span>
-<span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;|&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">left</span> <span class="o">&lt;&lt;</span> <span class="mi">123</span><span class="n">q_m</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;|&quot;</span><span class="p">;</span>          <span class="c1">// |123 m     |</span>
-<span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;|&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setfill</span><span class="p">(</span><span class="sc">&#39;*&#39;</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">123</span><span class="n">q_m</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;|&quot;</span><span class="p">;</span>  <span class="c1">// |*****123 m|</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;|&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">123</span><span class="n">_q_m</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;|&quot;</span><span class="p">;</span>                       <span class="c1">// |     123 m|</span>
+<span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;|&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">left</span> <span class="o">&lt;&lt;</span> <span class="mi">123</span><span class="n">_q_m</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;|&quot;</span><span class="p">;</span>          <span class="c1">// |123 m     |</span>
+<span class="n">os</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;|&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setfill</span><span class="p">(</span><span class="sc">&#39;*&#39;</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">123</span><span class="n">_q_m</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;|&quot;</span><span class="p">;</span>  <span class="c1">// |*****123 m|</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="fmt-format">
 <h2>fmt::format<a class="headerlink" href="#fmt-format" title="Permalink to this headline">¶</a></h2>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The text formatting support is provided via the <code class="docutils literal notranslate"><span class="pre">&lt;units/format.h&gt;</span></code> header file.</p>
+</div>
 <p>The <strong>mp-units</strong> via <code class="docutils literal notranslate"><span class="pre">fmt::format</span></code> provides a fine-grained control over what
 and how is being printed on the text output.</p>
 <div class="section" id="grammar">
@@ -259,13 +271,13 @@ and how is being printed on the text output.</p>
 <strong id="grammar-token-units-type">units-type         </strong> ::=  [units-rep-modifier] 'Q'
                          [units-unit-modifier] 'q'
                          one of &quot;nt%&quot;
-<strong id="grammar-token-units-rep-modifier">units-rep-modifier </strong> ::=  [sign] [#] [precision] [units-rep-type]
+<strong id="grammar-token-units-rep-modifier">units-rep-modifier </strong> ::=  [sign] [#] [precision] [L] [units-rep-type]
 <strong id="grammar-token-units-rep-type">units-rep-type     </strong> ::=  one of &quot;aAbBdeEfFgGoxX&quot;
 <strong id="grammar-token-units-unit-modifier">units-unit-modifier</strong> ::=  'A'
 </pre>
 <p>In the above grammar:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">fill-and-align</span></code>, <code class="docutils literal notranslate"><span class="pre">width</span></code>, <code class="docutils literal notranslate"><span class="pre">sign</span></code>, <code class="docutils literal notranslate"><span class="pre">#</span></code>, and <code class="docutils literal notranslate"><span class="pre">precision</span></code> tokens and
+<li><p><code class="docutils literal notranslate"><span class="pre">fill-and-align</span></code>, <code class="docutils literal notranslate"><span class="pre">width</span></code>, <code class="docutils literal notranslate"><span class="pre">sign</span></code>, <code class="docutils literal notranslate"><span class="pre">#</span></code>, <code class="docutils literal notranslate"><span class="pre">precision</span></code> and <code class="docutils literal notranslate"><span class="pre">L</span></code> tokens and
 individual tokens of <a class="reference internal" href="#grammar-token-units-rep-type"><code class="xref std std-token docutils literal notranslate"><span class="pre">units-rep-type</span></code></a> are defined in the
 <a class="reference external" href="https://wg21.link/format.string.std">format.string.std</a> chapter of the C++
 standard specification,</p></li>
@@ -278,13 +290,13 @@ default Unicode symbols defined by the <a class="reference internal" href="../gl
 </div>
 <div class="section" id="default-formatting">
 <h3>Default formatting<a class="headerlink" href="#default-formatting" title="Permalink to this headline">¶</a></h3>
-<p>To format <a class="reference internal" href="../reference/types.html#_CPPv4I_9Dimension_6UnitOfI1DE_6ScalarEN5units8quantityE" title="units::quantity"><code class="xref cpp cpp-any docutils literal notranslate"><span class="pre">quantity</span></code></a> values the formatting facility uses <a class="reference internal" href="#grammar-token-units-format-spec"><code class="xref std std-token docutils literal notranslate"><span class="pre">units-format-spec</span></code></a>.
+<p>To format <a class="reference internal" href="../reference/core/types/quantity.html#_CPPv4I_9Dimension_6UnitOfI1DE_14RepresentationEN5units8quantityE" title="units::quantity"><code class="xref cpp cpp-any docutils literal notranslate"><span class="pre">quantity</span></code></a> values the formatting facility uses <a class="reference internal" href="#grammar-token-units-format-spec"><code class="xref std std-token docutils literal notranslate"><span class="pre">units-format-spec</span></code></a>.
 In case it is left empty the default formatting of <code class="docutils literal notranslate"><span class="pre">{:%Q</span> <span class="pre">%q}</span></code> is applied. The same
 default formatting is also applied to the output streams. This is why the following
 code lines produce the same output:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Distance: &quot;</span> <span class="o">&lt;&lt;</span> <span class="mi">123</span><span class="n">q_km</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;Distance: {}</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_km</span><span class="p">);</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;Distance: {:%Q %q}</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_km</span><span class="p">);</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Distance: &quot;</span> <span class="o">&lt;&lt;</span> <span class="mi">123</span><span class="n">_q_km</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;Distance: {}</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_km</span><span class="p">);</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;Distance: {:%Q %q}</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_km</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -292,9 +304,9 @@ code lines produce the same output:</p>
 <h3>Quantity Value, Symbol, or Both?<a class="headerlink" href="#quantity-value-symbol-or-both" title="Permalink to this headline">¶</a></h3>
 <p>The user can easily decide to either print a whole quantity (value and symbol) or
 only its parts. Also a different quantity formatting might be applied:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_km</span><span class="p">);</span>    <span class="c1">// 123</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%q}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_km</span><span class="p">);</span>    <span class="c1">// km</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q%q}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_km</span><span class="p">);</span>  <span class="c1">// 123km</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_km</span><span class="p">);</span>    <span class="c1">// 123</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%q}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_km</span><span class="p">);</span>    <span class="c1">// km</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q%q}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_km</span><span class="p">);</span>  <span class="c1">// 123km</span>
 </pre></div>
 </div>
 </div>
@@ -303,14 +315,14 @@ only its parts. Also a different quantity formatting might be applied:</p>
 <p>To control width, fill, and alignment the C++ standard grammar tokens <code class="docutils literal notranslate"><span class="pre">fill-and-align</span></code>
 and <code class="docutils literal notranslate"><span class="pre">width</span></code> are being used and they treat a quantity value and symbol as a contiguous
 text:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:0}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_m</span><span class="p">);</span>     <span class="c1">// |123 m|</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:10}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_m</span><span class="p">);</span>    <span class="c1">// |     123 m|</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:&lt;10}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_m</span><span class="p">);</span>   <span class="c1">// |123 m     |</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:&gt;10}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_m</span><span class="p">);</span>   <span class="c1">// |     123 m|</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:^10}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_m</span><span class="p">);</span>   <span class="c1">// |  123 m   |</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:*&lt;10}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_m</span><span class="p">);</span>  <span class="c1">// |123 m*****|</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:*&gt;10}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_m</span><span class="p">);</span>  <span class="c1">// |*****123 m|</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:*^10}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_m</span><span class="p">);</span>  <span class="c1">// |**123 m***|</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:0}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_m</span><span class="p">);</span>     <span class="c1">// |123 m|</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:10}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_m</span><span class="p">);</span>    <span class="c1">// |     123 m|</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:&lt;10}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_m</span><span class="p">);</span>   <span class="c1">// |123 m     |</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:&gt;10}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_m</span><span class="p">);</span>   <span class="c1">// |     123 m|</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:^10}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_m</span><span class="p">);</span>   <span class="c1">// |  123 m   |</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:*&lt;10}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_m</span><span class="p">);</span>  <span class="c1">// |123 m*****|</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:*&gt;10}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_m</span><span class="p">);</span>  <span class="c1">// |*****123 m|</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;|{:*^10}|&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_m</span><span class="p">);</span>  <span class="c1">// |**123 m***|</span>
 </pre></div>
 </div>
 </div>
@@ -321,20 +333,20 @@ standard (i.e. <code class="docutils literal notranslate"><span class="pre">Ω</
 this by default. From the engineering point of view sometimes Unicode text  might
 not be a solution as terminals of many (especially embedded) devices are ASCII-only.
 In such a case the unit symbol can be forced to be printed using ASCII-only characters:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="n">q_R</span><span class="p">);</span>                 <span class="c1">// 10 Ω</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q %Aq}&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="n">q_R</span><span class="p">);</span>          <span class="c1">// 10 ohm</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="mi">125</span><span class="n">q_us</span><span class="p">);</span>               <span class="c1">// 125 µs</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q %Aq}&quot;</span><span class="p">,</span> <span class="mi">125</span><span class="n">q_us</span><span class="p">);</span>        <span class="c1">// 125 us</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="mf">9.8</span><span class="n">q_m_per_s2</span><span class="p">);</span>         <span class="c1">// 9.8 m/s²</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q %Aq}&quot;</span><span class="p">,</span> <span class="mf">9.8</span><span class="n">q_m_per_s2</span><span class="p">);</span>  <span class="c1">// 9.8 m/s^2</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="n">_q_R</span><span class="p">);</span>                 <span class="c1">// 10 Ω</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q %Aq}&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="n">_q_R</span><span class="p">);</span>          <span class="c1">// 10 ohm</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="mi">125</span><span class="n">_q_us</span><span class="p">);</span>               <span class="c1">// 125 µs</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q %Aq}&quot;</span><span class="p">,</span> <span class="mi">125</span><span class="n">_q_us</span><span class="p">);</span>        <span class="c1">// 125 us</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="mf">9.8</span><span class="n">_q_m_per_s2</span><span class="p">);</span>         <span class="c1">// 9.8 m/s²</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q %Aq}&quot;</span><span class="p">,</span> <span class="mf">9.8</span><span class="n">_q_m_per_s2</span><span class="p">);</span>  <span class="c1">// 9.8 m/s^2</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="controlling-on-how-the-quantity-value-is-being-printed">
 <h3>Controlling on How the Quantity Value Is Being Printed<a class="headerlink" href="#controlling-on-how-the-quantity-value-is-being-printed" title="Permalink to this headline">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">sign</span></code> token allows us to specify on how the value’s sign is being printed:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{0:%Q %q},{0:%+Q %q},{0:%-Q %q},{0:% Q %q}&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="n">q_m</span><span class="p">);</span>   <span class="c1">// 1 m,+1 m,1 m, 1 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{0:%Q %q},{0:%+Q %q},{0:%-Q %q},{0:% Q %q}&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="n">q_m</span><span class="p">);</span>  <span class="c1">// -1 m,-1 m,-1 m,-1 m</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{0:%Q %q},{0:%+Q %q},{0:%-Q %q},{0:% Q %q}&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="n">_q_m</span><span class="p">);</span>   <span class="c1">// 1 m,+1 m,1 m, 1 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{0:%Q %q},{0:%+Q %q},{0:%-Q %q},{0:% Q %q}&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="n">_q_m</span><span class="p">);</span>  <span class="c1">// -1 m,-1 m,-1 m,-1 m</span>
 </pre></div>
 </div>
 <p>where:</p>
@@ -346,46 +358,46 @@ In such a case the unit symbol can be forced to be printed using ASCII-only char
 than negative zero, and a minus sign for negative numbers and negative zero.</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">precision</span></code> token is allowed only for floating-point representation types:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.0Q %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345</span><span class="n">q_m</span><span class="p">);</span>  <span class="c1">// 1 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.1Q %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345</span><span class="n">q_m</span><span class="p">);</span>  <span class="c1">// 1.2 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.2Q %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345</span><span class="n">q_m</span><span class="p">);</span>  <span class="c1">// 1.23 m</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.0Q %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345</span><span class="n">_q_m</span><span class="p">);</span>  <span class="c1">// 1 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.1Q %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345</span><span class="n">_q_m</span><span class="p">);</span>  <span class="c1">// 1.2 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.2Q %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345</span><span class="n">_q_m</span><span class="p">);</span>  <span class="c1">// 1.23 m</span>
 </pre></div>
 </div>
 <p><a class="reference internal" href="#grammar-token-units-rep-type"><code class="xref std std-token docutils literal notranslate"><span class="pre">units-rep-type</span></code></a> specifies how a value of the representation type is being
 printed. For integral types:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%bQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">q_m</span><span class="p">);</span>    <span class="c1">// 101010 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%BQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">q_m</span><span class="p">);</span>    <span class="c1">// 101010 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%dQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">q_m</span><span class="p">);</span>    <span class="c1">// 42 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%oQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">q_m</span><span class="p">);</span>    <span class="c1">// 52 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%xQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">q_m</span><span class="p">);</span>    <span class="c1">// 2a m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%XQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">q_m</span><span class="p">);</span>    <span class="c1">// 2A m</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%bQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">_q_m</span><span class="p">);</span>    <span class="c1">// 101010 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%BQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">_q_m</span><span class="p">);</span>    <span class="c1">// 101010 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%dQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">_q_m</span><span class="p">);</span>    <span class="c1">// 42 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%oQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">_q_m</span><span class="p">);</span>    <span class="c1">// 52 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%xQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">_q_m</span><span class="p">);</span>    <span class="c1">// 2a m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%XQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">_q_m</span><span class="p">);</span>    <span class="c1">// 2A m</span>
 </pre></div>
 </div>
 <p>The above can be printed in an alternate version thanks to the <code class="docutils literal notranslate"><span class="pre">#</span></code> token:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%#bQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">q_m</span><span class="p">);</span>   <span class="c1">// 0b101010 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%#BQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">q_m</span><span class="p">);</span>   <span class="c1">// 0B101010 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%#oQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">q_m</span><span class="p">);</span>   <span class="c1">// 052 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%#xQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">q_m</span><span class="p">);</span>   <span class="c1">// 0x2a m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%#XQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">q_m</span><span class="p">);</span>   <span class="c1">// 0X2A m</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%#bQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">_q_m</span><span class="p">);</span>   <span class="c1">// 0b101010 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%#BQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">_q_m</span><span class="p">);</span>   <span class="c1">// 0B101010 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%#oQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">_q_m</span><span class="p">);</span>   <span class="c1">// 052 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%#xQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">_q_m</span><span class="p">);</span>   <span class="c1">// 0x2a m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%#XQ %q}&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="n">_q_m</span><span class="p">);</span>   <span class="c1">// 0X2A m</span>
 </pre></div>
 </div>
 <p>For floating-point values the <a class="reference internal" href="#grammar-token-units-rep-type"><code class="xref std std-token docutils literal notranslate"><span class="pre">units-rep-type</span></code></a> token works as follows:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%aQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678</span><span class="n">q_m</span><span class="p">);</span>      <span class="c1">// 0x9.e065152d8eae841p-3 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3aQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678</span><span class="n">q_m</span><span class="p">);</span>      <span class="c1">// 0x9.e06p-3 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%AQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678</span><span class="n">q_m</span><span class="p">);</span>      <span class="c1">// 0X9.E065152D8EAE841P-3 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3AQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678</span><span class="n">q_m</span><span class="p">);</span>      <span class="c1">// 0X9.E06P-3 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%eQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678</span><span class="n">q_m</span><span class="p">);</span>      <span class="c1">// 1.234568e+00 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3eQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678</span><span class="n">q_m</span><span class="p">);</span>      <span class="c1">// 1.235e+00 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%EQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678</span><span class="n">q_m</span><span class="p">);</span>      <span class="c1">// 1.234568E+00 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3EQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678</span><span class="n">q_m</span><span class="p">);</span>      <span class="c1">// 1.235E+00 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%gQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678</span><span class="n">q_m</span><span class="p">);</span>      <span class="c1">// 1.23457 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%gQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678e8</span><span class="n">q_m</span><span class="p">);</span>    <span class="c1">// 1.23457e+08 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3gQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678</span><span class="n">q_m</span><span class="p">);</span>      <span class="c1">// 1.23 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3gQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678e8</span><span class="n">q_m</span><span class="p">);</span>    <span class="c1">// 1.23e+08 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%GQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678</span><span class="n">q_m</span><span class="p">);</span>      <span class="c1">// 1.23457 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%GQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678e8</span><span class="n">q_m</span><span class="p">);</span>    <span class="c1">// 1.23457E+08 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3GQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678</span><span class="n">q_m</span><span class="p">);</span>      <span class="c1">// 1.23 m</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3GQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678e8</span><span class="n">q_m</span><span class="p">);</span>    <span class="c1">// 1.23E+08 m</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%aQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678</span><span class="n">_q_m</span><span class="p">);</span>      <span class="c1">// 0x9.e065152d8eae841p-3 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3aQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678</span><span class="n">_q_m</span><span class="p">);</span>      <span class="c1">// 0x9.e06p-3 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%AQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678</span><span class="n">_q_m</span><span class="p">);</span>      <span class="c1">// 0X9.E065152D8EAE841P-3 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3AQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678</span><span class="n">_q_m</span><span class="p">);</span>      <span class="c1">// 0X9.E06P-3 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%eQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678</span><span class="n">_q_m</span><span class="p">);</span>      <span class="c1">// 1.234568e+00 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3eQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678</span><span class="n">_q_m</span><span class="p">);</span>      <span class="c1">// 1.235e+00 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%EQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678</span><span class="n">_q_m</span><span class="p">);</span>      <span class="c1">// 1.234568E+00 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3EQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678</span><span class="n">_q_m</span><span class="p">);</span>      <span class="c1">// 1.235E+00 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%gQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678</span><span class="n">_q_m</span><span class="p">);</span>      <span class="c1">// 1.23457 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%gQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678e8</span><span class="n">_q_m</span><span class="p">);</span>    <span class="c1">// 1.23457e+08 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3gQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678</span><span class="n">_q_m</span><span class="p">);</span>      <span class="c1">// 1.23 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3gQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678e8</span><span class="n">_q_m</span><span class="p">);</span>    <span class="c1">// 1.23e+08 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%GQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678</span><span class="n">_q_m</span><span class="p">);</span>      <span class="c1">// 1.23457 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%GQ %q}&quot;</span><span class="p">,</span>   <span class="mf">1.2345678e8</span><span class="n">_q_m</span><span class="p">);</span>    <span class="c1">// 1.23457E+08 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3GQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678</span><span class="n">_q_m</span><span class="p">);</span>      <span class="c1">// 1.23 m</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%.3GQ %q}&quot;</span><span class="p">,</span> <span class="mf">1.2345678e8</span><span class="n">_q_m</span><span class="p">);</span>    <span class="c1">// 1.23E+08 m</span>
 </pre></div>
 </div>
 </div>
@@ -393,10 +405,10 @@ printed. For integral types:</p>
 <h3>Special Signs<a class="headerlink" href="#special-signs" title="Permalink to this headline">¶</a></h3>
 <p>Beside adding any list of regular characters as a separator between the value and the
 symbol, it is possible to type a few special signs there too:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q_%q}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_km</span><span class="p">);</span>    <span class="c1">// 123_km</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q%t%q}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_km</span><span class="p">);</span>   <span class="c1">// 123\tkm  &lt;tab&gt;</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q%n%q}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_km</span><span class="p">);</span>   <span class="c1">// 123\nkm  &lt;new line&gt;</span>
-<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q%% %q}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">q_km</span><span class="p">);</span>  <span class="c1">// 123% km</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q_%q}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_km</span><span class="p">);</span>    <span class="c1">// 123_km</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q%t%q}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_km</span><span class="p">);</span>   <span class="c1">// 123\tkm  &lt;tab&gt;</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q%n%q}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_km</span><span class="p">);</span>   <span class="c1">// 123\nkm  &lt;new line&gt;</span>
+<span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;{:%Q%% %q}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="n">_q_km</span><span class="p">);</span>  <span class="c1">// 123% km</span>
 </pre></div>
 </div>
 </div>

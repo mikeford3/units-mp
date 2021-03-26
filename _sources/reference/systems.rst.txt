@@ -1,31 +1,12 @@
-.. note::
-
-  All names defined in this chapter reside in the :any:`units` namespace unless specified otherwise.
-
 Systems
 =======
 
-SI
---
+.. toctree::
+    :maxdepth: 2
 
-.. doxygennamespace:: units::si
-    :members:
-    :undoc-members:
-    :outline:
+    systems/generic
 
+.. toctree::
+    :maxdepth: 2
 
-File
-----
-
-.. 
-   doxygenfile:: si/length.h
-
-Group
------
-
-.. 
-   doxygengroup:: si_length
-    :content-only:
-    :members:
-    :undoc-members:
-    :outline:
+    systems/isq

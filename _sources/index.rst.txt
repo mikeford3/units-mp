@@ -8,15 +8,19 @@ with a permissive `MIT license <https://github.com/mpusz/units/blob/master/LICEN
 
 .. important::
 
-    The **mp-units** library is the subject of this ISO C++ paper: `P1935 <https://wg21.link/p1935>`_.
-    It is explained in this `CppCon 2019 talk <https://youtu.be/0YW6yxkdhlU>`_ (slightly dated now).
-    We are working towards potentially having it standardized for C++23 and are actively looking
-    for parties interested in field trialing the library.
+    The **mp-units** library is the subject of ISO standardization for C++23/26. More on this can
+    be found in ISO C++ paper `P1935 <https://wg21.link/p1935>`_ and
+    `CppCon 2020 talk <https://www.youtube.com/watch?v=7dExYGSOJzo>`_. We are actively looking for
+    parties interested in field trialing the library.
 
 .. note::
 
-    As this library targets C++23 and extensively uses C++20 features as of now it compiles correctly
-    only with gcc-9.1 and newer.
+    This library targets C++23/26 and extensively uses C++20 features. This is why it requires the latest C++
+    compilers. The following compilers (or newer) are supported:
+
+    - gcc-10
+    - clang-12
+    - Visual Studio 16.9
 
 .. toctree::
     :maxdepth: 2
@@ -32,13 +36,19 @@ with a permissive `MIT license <https://github.com/mpusz/units/blob/master/LICEN
     faq
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
     :caption: Reference:
 
-    reference/concepts
-    reference/types
-    reference/functions
+    reference/core
     reference/systems
+    reference/math
+    reference/random
+
+.. note::
+
+    Source code documentation tools used to generate the above chapter still do not understand
+    C++20 to well which results in some issues in the generated output. We do our best to address
+    this ASAP.
 
 .. toctree::
     :maxdepth: 1
@@ -47,3 +57,4 @@ with a permissive `MIT license <https://github.com/mpusz/units/blob/master/LICEN
     glossary
     genindex
     CHANGELOG
+    references

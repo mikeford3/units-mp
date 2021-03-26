@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>quantity &mdash; mp-units 0.5.0 documentation</title>
+  <title>quantity &mdash; mp-units 0.7.0 documentation</title>
   
 
   
@@ -31,15 +31,13 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Examples" href="../examples.html" />
+    <link rel="next" title="quantity_kind" href="quantity_kind.html" />
     <link rel="prev" title="Library Directories Structure" href="directories.html" /> 
 </head>
 
@@ -64,7 +62,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.7.0
               </div>
             
           
@@ -102,7 +100,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#interface">Interface</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../design.html#the-downcasting-facility">The Downcasting Facility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantity_kind.html">quantity_kind</a></li>
+<li class="toctree-l2"><a class="reference internal" href="downcasting.html">The Downcasting Facility</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
@@ -110,17 +109,16 @@
 </ul>
 <p class="caption"><span class="caption-text">Reference:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../reference/concepts.html">Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/types.html">Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/functions.html">Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/functions.html#metafunctions">Metafunctions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/core.html">Core Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/systems.html">Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/random.html">Random</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Appendix:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
 </ul>
 
             
@@ -192,11 +190,11 @@
 <h1>quantity<a class="headerlink" href="#quantity" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="interface">
 <h2>Interface<a class="headerlink" href="#interface" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="../reference/types.html#_CPPv4I_9Dimension_6UnitOfI1DE_6ScalarEN5units8quantityE" title="units::quantity"><code class="xref cpp cpp-any docutils literal notranslate"><span class="pre">quantity</span></code></a> class template provides a similar interface to
+<p><a class="reference internal" href="../reference/core/types/quantity.html#_CPPv4I_9Dimension_6UnitOfI1DE_14RepresentationEN5units8quantityE" title="units::quantity"><code class="xref cpp cpp-any docutils literal notranslate"><span class="pre">quantity</span></code></a> class template provides a similar interface to
 <a class="reference external" href="https://en.cppreference.com/w/cpp/chrono/duration">std::chrono::duration</a>.
 The difference is that it uses <code class="docutils literal notranslate"><span class="pre">double</span></code> as a default representation and has
 a few additional member types and functions:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="o">&lt;</span><span class="n">Dimension</span> <span class="n">D</span><span class="p">,</span> <span class="n">UnitOf</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&gt;</span> <span class="n">U</span><span class="p">,</span> <span class="n">Scalar</span> <span class="n">Rep</span> <span class="o">=</span> <span class="kt">double</span><span class="o">&gt;</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="o">&lt;</span><span class="n">Dimension</span> <span class="n">D</span><span class="p">,</span> <span class="n">UnitOf</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&gt;</span> <span class="n">U</span><span class="p">,</span> <span class="n">Representation</span> <span class="n">Rep</span> <span class="o">=</span> <span class="kt">double</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">quantity</span> <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
   <span class="k">using</span> <span class="n">dimension</span> <span class="o">=</span> <span class="n">D</span><span class="p">;</span>
@@ -208,47 +206,37 @@ a few additional member types and functions:</p>
 <span class="p">};</span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">D1</span><span class="p">,</span> <span class="k">typename</span> <span class="n">U1</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Rep1</span><span class="p">,</span> <span class="k">typename</span> <span class="n">D2</span><span class="p">,</span> <span class="k">typename</span> <span class="n">U2</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Rep2</span><span class="o">&gt;</span>
-  <span class="k">requires</span> <span class="n">detail</span><span class="o">::</span><span class="n">basic_arithmetic</span><span class="o">&lt;</span><span class="n">Rep1</span><span class="p">,</span> <span class="n">Rep2</span><span class="o">&gt;</span> <span class="o">&amp;&amp;</span> <span class="n">equivalent_dim</span><span class="o">&lt;</span><span class="n">D1</span><span class="p">,</span> <span class="n">dim_invert</span><span class="o">&lt;</span><span class="n">D2</span><span class="o">&gt;&gt;</span>
-<span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span> <span class="k">constexpr</span> <span class="n">Scalar</span> <span class="k">auto</span> <span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="k">const</span> <span class="n">quantity</span><span class="o">&lt;</span><span class="n">D1</span><span class="p">,</span> <span class="n">U1</span><span class="p">,</span> <span class="n">Rep1</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span>
-                                              <span class="k">const</span> <span class="n">quantity</span><span class="o">&lt;</span><span class="n">D2</span><span class="p">,</span> <span class="n">U2</span><span class="p">,</span> <span class="n">Rep2</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">);</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">D1</span><span class="p">,</span> <span class="k">typename</span> <span class="n">U1</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Rep1</span><span class="p">,</span> <span class="k">typename</span> <span class="n">D2</span><span class="p">,</span> <span class="k">typename</span> <span class="n">U2</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Rep2</span><span class="o">&gt;</span>
-  <span class="k">requires</span> <span class="n">detail</span><span class="o">::</span><span class="n">basic_arithmetic</span><span class="o">&lt;</span><span class="n">Rep1</span><span class="p">,</span> <span class="n">Rep2</span><span class="o">&gt;</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="n">equivalent_dim</span><span class="o">&lt;</span><span class="n">D1</span><span class="p">,</span> <span class="n">dim_invert</span><span class="o">&lt;</span><span class="n">D2</span><span class="o">&gt;&gt;</span><span class="p">)</span>
+  <span class="k">requires</span> <span class="n">detail</span><span class="o">::</span><span class="n">basic_arithmetic</span><span class="o">&lt;</span><span class="n">Rep1</span><span class="p">,</span> <span class="n">Rep2</span><span class="o">&gt;</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="n">equivalent</span><span class="o">&lt;</span><span class="n">D1</span><span class="p">,</span> <span class="n">dim_invert</span><span class="o">&lt;</span><span class="n">D2</span><span class="o">&gt;&gt;</span><span class="p">)</span>
 <span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span> <span class="k">constexpr</span> <span class="n">Quantity</span> <span class="k">auto</span> <span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="k">const</span> <span class="n">quantity</span><span class="o">&lt;</span><span class="n">D1</span><span class="p">,</span> <span class="n">U1</span><span class="p">,</span> <span class="n">Rep1</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span>
                                                 <span class="k">const</span> <span class="n">quantity</span><span class="o">&lt;</span><span class="n">D2</span><span class="p">,</span> <span class="n">U2</span><span class="p">,</span> <span class="n">Rep2</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">);</span>
 
-<span class="k">template</span><span class="o">&lt;</span><span class="n">Scalar</span> <span class="n">Value</span><span class="p">,</span> <span class="k">typename</span> <span class="n">D</span><span class="p">,</span> <span class="k">typename</span> <span class="n">U</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Rep</span><span class="o">&gt;</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="n">Representation</span> <span class="n">Value</span><span class="p">,</span> <span class="k">typename</span> <span class="n">D</span><span class="p">,</span> <span class="k">typename</span> <span class="n">U</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Rep</span><span class="o">&gt;</span>
   <span class="k">requires</span> <span class="n">std</span><span class="o">::</span><span class="n">magma</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">ranges</span><span class="o">::</span><span class="n">divided_by</span><span class="p">,</span> <span class="n">Value</span><span class="p">,</span> <span class="n">Rep</span><span class="o">&gt;</span>
 <span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span> <span class="k">constexpr</span> <span class="n">Quantity</span> <span class="k">auto</span> <span class="k">operator</span><span class="o">/</span><span class="p">(</span><span class="k">const</span> <span class="n">Value</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">,</span>
                                                 <span class="k">const</span> <span class="n">quantity</span><span class="o">&lt;</span><span class="n">D</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">Rep</span><span class="o">&gt;&amp;</span> <span class="n">q</span><span class="p">);</span>
 
 <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">D1</span><span class="p">,</span> <span class="k">typename</span> <span class="n">U1</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Rep1</span><span class="p">,</span> <span class="k">typename</span> <span class="n">D2</span><span class="p">,</span> <span class="k">typename</span> <span class="n">U2</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Rep2</span><span class="o">&gt;</span>
-  <span class="k">requires</span> <span class="n">detail</span><span class="o">::</span><span class="n">basic_arithmetic</span><span class="o">&lt;</span><span class="n">Rep1</span><span class="p">,</span> <span class="n">Rep2</span><span class="o">&gt;</span> <span class="o">&amp;&amp;</span> <span class="n">equivalent_dim</span><span class="o">&lt;</span><span class="n">D1</span><span class="p">,</span> <span class="n">D2</span><span class="o">&gt;</span>
-<span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span> <span class="k">constexpr</span> <span class="n">Scalar</span> <span class="k">auto</span> <span class="k">operator</span><span class="o">/</span><span class="p">(</span><span class="k">const</span> <span class="n">quantity</span><span class="o">&lt;</span><span class="n">D1</span><span class="p">,</span> <span class="n">U1</span><span class="p">,</span> <span class="n">Rep1</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span>
-                                              <span class="k">const</span> <span class="n">quantity</span><span class="o">&lt;</span><span class="n">D2</span><span class="p">,</span> <span class="n">U2</span><span class="p">,</span> <span class="n">Rep2</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">);</span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">D1</span><span class="p">,</span> <span class="k">typename</span> <span class="n">U1</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Rep1</span><span class="p">,</span> <span class="k">typename</span> <span class="n">D2</span><span class="p">,</span> <span class="k">typename</span> <span class="n">U2</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Rep2</span><span class="o">&gt;</span>
-  <span class="k">requires</span> <span class="n">detail</span><span class="o">::</span><span class="n">basic_arithmetic</span><span class="o">&lt;</span><span class="n">Rep1</span><span class="p">,</span> <span class="n">Rep2</span><span class="o">&gt;</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="n">equivalent_dim</span><span class="o">&lt;</span><span class="n">D1</span><span class="p">,</span> <span class="n">D2</span><span class="o">&gt;</span><span class="p">)</span>
-<span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span> <span class="k">constexpr</span> <span class="n">Quantity</span> <span class="n">AUTO</span> <span class="k">operator</span><span class="o">/</span><span class="p">(</span><span class="k">const</span> <span class="n">quantity</span><span class="o">&lt;</span><span class="n">D1</span><span class="p">,</span> <span class="n">U1</span><span class="p">,</span> <span class="n">Rep1</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span>
+  <span class="k">requires</span> <span class="n">detail</span><span class="o">::</span><span class="n">basic_arithmetic</span><span class="o">&lt;</span><span class="n">Rep1</span><span class="p">,</span> <span class="n">Rep2</span><span class="o">&gt;</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="n">equivalent</span><span class="o">&lt;</span><span class="n">D1</span><span class="p">,</span> <span class="n">D2</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span> <span class="k">constexpr</span> <span class="n">Quantity</span> <span class="k">auto</span> <span class="k">operator</span><span class="o">/</span><span class="p">(</span><span class="k">const</span> <span class="n">quantity</span><span class="o">&lt;</span><span class="n">D1</span><span class="p">,</span> <span class="n">U1</span><span class="p">,</span> <span class="n">Rep1</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span>
                                                 <span class="k">const</span> <span class="n">quantity</span><span class="o">&lt;</span><span class="n">D2</span><span class="p">,</span> <span class="n">U2</span><span class="p">,</span> <span class="n">Rep2</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Additional functions provide the support for operations that result in a
-different dimension type than those of their arguments. <code class="docutils literal notranslate"><span class="pre">equivalent_dim</span></code>
+different dimension type than those of their arguments. <code class="docutils literal notranslate"><span class="pre">equivalent</span></code>
 constraint requires two dimensions to be either the same or have convertible
 units of base dimension (with the same reference unit).</p>
 <p>Beside adding new elements a few other changes where applied compared to the
 <a class="reference external" href="https://en.cppreference.com/w/cpp/chrono/duration">std::chrono::duration</a>
 class template:</p>
 <ol class="arabic simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">duration</span></code> is using <code class="docutils literal notranslate"><span class="pre">std::common_type_t&lt;Rep1,</span> <span class="pre">Rep2&gt;</span></code> to find a common
+<li><p>The <code class="docutils literal notranslate"><span class="pre">std::chrono::duration</span></code> is using <code class="docutils literal notranslate"><span class="pre">std::common_type_t&lt;Rep1,</span> <span class="pre">Rep2&gt;</span></code> to find a common
 representation for a calculation result. Such a design was reported as problematic
 by SG6 (numerics study group) members as sometimes we want to provide a different
 type in case of multiplication and different in case of division. <code class="docutils literal notranslate"><span class="pre">std::common_type</span></code>
-lacks that additional information. That is why <a class="reference internal" href="../reference/types.html#_CPPv4I_9Dimension_6UnitOfI1DE_6ScalarEN5units8quantityE" title="units::quantity"><code class="xref cpp cpp-any docutils literal notranslate"><span class="pre">units::quantity</span></code></a> uses the resulting
+lacks that additional information. That is why <a class="reference internal" href="../reference/core/types/quantity.html#_CPPv4I_9Dimension_6UnitOfI1DE_14RepresentationEN5units8quantityE" title="units::quantity"><code class="xref cpp cpp-any docutils literal notranslate"><span class="pre">quantity</span></code></a> uses the resulting
 type of a concrete operator operation.</p></li>
-<li><p><code class="xref cpp cpp-any docutils literal notranslate"><span class="pre">operator</span> <span class="pre">%</span></code> is constrained with <code class="xref cpp cpp-any docutils literal notranslate"><span class="pre">treat_as_floating_point</span></code> type trait to limit the
-types to integral representations only. Also <code class="xref cpp cpp-any docutils literal notranslate"><span class="pre">operator</span> <span class="pre">%(Rep)</span></code> takes <code class="xref cpp cpp-any docutils literal notranslate"><span class="pre">Rep</span></code> as a
+<li><p><code class="docutils literal notranslate"><span class="pre">quantity::operator%()</span></code> is constrained with <a class="reference internal" href="../reference/core/customization_points.html#_CPPv4I0EN5units23treat_as_floating_pointE" title="units::treat_as_floating_point"><code class="xref cpp cpp-any docutils literal notranslate"><span class="pre">treat_as_floating_point</span></code></a> type trait to limit the
+types to integral representations only. Also <code class="docutils literal notranslate"><span class="pre">quantity::operator%(Rep)</span></code> takes <code class="docutils literal notranslate"><span class="pre">Rep</span></code> as a
 template argument to limit implicit conversions.</p></li>
 </ol>
 </div>
@@ -262,7 +250,7 @@ template argument to limit implicit conversions.</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="quantity_kind.html" class="btn btn-neutral float-right" title="quantity_kind" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="directories.html" class="btn btn-neutral float-left" title="Library Directories Structure" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
